@@ -10,7 +10,7 @@ width: 500px;
 
 const InputHolder = styled.div`
 display: flex;
-align-items: center;
+align-items: baseline;
 border: 1px solid #e0e0e0;
 border-radius: 2px;
 padding: 10px;
@@ -57,14 +57,34 @@ export default class PhoneForm extends React.Component {
     this.setState({isCountriesOpen: !this.state.isCountriesOpen});
   };
 
+  findCountryByPhone(phone) {
+    let phoneWithPlus = `+${phone}`;
+    return this.state.countries.find(country => {
+      return phoneWithPlus.indexOf(country.phoneInfo.prefix) === 0
+    });
+  }
+
   onPhoneChange = e => {
-    this.setState({phone: e.target.value});
+    let phone = e.target.value.replace(/\D/g, '');
+    let country = this.findCountryByPhone(phone);
+    if (country) {
+      let {phoneInfo} = country;
+      let maxLength = phoneInfo.maxLength + phoneInfo.prefix.replace('+', '').length;
+      if (phone.length > maxLength) {
+        phone = phone.slice(0, maxLength);
+      }
+    }
+    this.setState({
+      phone,
+      selectedCountry: country,
+    });
   };
 
   onCountrySelect = country => {
+    let phone = country.phoneInfo.prefix.replace('+', '');
     this.setState({
-      selectedCountry: country,
-      phone: country.phoneInfo.prefix,
+      phone,
+      selectedCountry: this.findCountryByPhone(phone),
       isCountriesOpen: false,
     })
   };
@@ -88,6 +108,7 @@ export default class PhoneForm extends React.Component {
             <CountryFlag country={selectedCountry}/>
             <img src={require('../img/arrow.png')} alt="Arrow"/>
           </Arrow>
+          +
           <Input
             type="tel"
             value={phone}
@@ -99,6 +120,15 @@ export default class PhoneForm extends React.Component {
             countries={countries}
             onSelect={this.onCountrySelect}
           />
+        )}
+        <div>
+          phone length with prefix: {phone.length}
+        </div>
+        {selectedCountry && (
+          <div>
+            <div>min length: {selectedCountry.phoneInfo.minLength}</div>
+            <div>max length: {selectedCountry.phoneInfo.maxLength}</div>
+          </div>
         )}
         <button>Далее</button>
       </Form>
