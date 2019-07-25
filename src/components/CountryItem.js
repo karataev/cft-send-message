@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import CountryFlag from "./CountryFlag";
 
 const Root = styled.div`
 padding: 13px;
@@ -18,6 +19,7 @@ export default class CountryItem extends React.Component {
 
     return (
       <Root onClick={() => this.props.onSelect(country)}>
+        <CountryFlag country={country} />
         {country.name} ({country.phoneInfo.prefix})
       </Root>
     )

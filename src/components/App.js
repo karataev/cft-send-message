@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import PhoneForm from "./PhoneForm";
+import 'flag-icon-css/css/flag-icon.css';
 
 const Root = styled.div`
 display: flex;

@@ -2,6 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
 import CountriesList from "./CountriesList";
+import CountryFlag from "./CountryFlag";
 
 const Form = styled.form`
 width: 500px;
@@ -38,6 +39,7 @@ export default class PhoneForm extends React.Component {
       phone: '',
       countries: [],
       isCountriesOpen: true,
+      selectedCountry: null,
     }
   }
 
@@ -61,6 +63,7 @@ export default class PhoneForm extends React.Component {
 
   onCountrySelect = country => {
     this.setState({
+      selectedCountry: country,
       phone: country.phoneInfo.prefix,
       isCountriesOpen: false,
     })
@@ -74,13 +77,15 @@ export default class PhoneForm extends React.Component {
   };
 
   render() {
-    const {countries, isCountriesOpen, phone} = this.state;
+    const {countries, isCountriesOpen, phone, selectedCountry} = this.state;
+
 
     return (
       <Form onSubmit={this.onSubmit}>
         <div>Телефон</div>
         <InputHolder>
           <Arrow onClick={this.onArrowClick}>
+            <CountryFlag country={selectedCountry}/>
             <img src={require('../img/arrow.png')} alt="Arrow"/>
           </Arrow>
           <Input
