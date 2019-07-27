@@ -1,5 +1,4 @@
 import React from 'react';
-import axios from 'axios';
 import styled from 'styled-components';
 import CountriesList from "./CountriesList";
 import CountryFlag from "./CountryFlag";
@@ -37,20 +36,9 @@ export default class PhoneForm extends React.Component {
 
     this.state = {
       phone: '',
-      countries: [],
       isCountriesOpen: true,
       selectedCountry: null,
     }
-  }
-
-  componentDidMount() {
-    let countriesUrl = 'https://koronapay.com/online/api/countries';
-    axios.get(countriesUrl)
-      .then(res => {
-        let countries = res.data.filter(country => country.phoneInfo);
-        this.setState({countries});
-        console.log(countries);
-      })
   }
 
   onArrowClick = e => {
@@ -59,7 +47,7 @@ export default class PhoneForm extends React.Component {
 
   findCountryByPhone(phone) {
     let phoneWithPlus = `+${phone}`;
-    return this.state.countries.find(country => {
+    return this.props.countries.find(country => {
       return phoneWithPlus.indexOf(country.phoneInfo.prefix) === 0
     });
   }
@@ -97,7 +85,8 @@ export default class PhoneForm extends React.Component {
   };
 
   render() {
-    const {countries, isCountriesOpen, phone, selectedCountry} = this.state;
+    const {countries} = this.props;
+    const {isCountriesOpen, phone, selectedCountry} = this.state;
 
 
     return (
