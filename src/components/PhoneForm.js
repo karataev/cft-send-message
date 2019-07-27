@@ -29,7 +29,7 @@ flex-grow: 1;
 outline: none;
 `;
 
-const nullCountry = {
+const unknownCountry = {
   phoneInfo: {
     prefix: '',
     minLength: 12,
@@ -45,7 +45,8 @@ export default class PhoneForm extends React.Component {
     this.state = {
       phone: '',
       isCountriesOpen: true,
-      selectedCountry: nullCountry,
+      selectedCountry: unknownCountry,
+      errorMessage: null,
     }
   }
 
@@ -57,7 +58,7 @@ export default class PhoneForm extends React.Component {
     let country = this.props.countries.find(country => {
       return phone.indexOf(country.phoneInfo.prefix) === 0;
     });
-    return country || nullCountry;
+    return country || unknownCountry;
   }
 
   normalizePhone(phoneWithPrefix, country) {
@@ -74,6 +75,7 @@ export default class PhoneForm extends React.Component {
     this.setState({
       phone,
       selectedCountry: country,
+      errorMessage: null,
     });
   };
 
@@ -84,11 +86,17 @@ export default class PhoneForm extends React.Component {
       phone: phone,
       selectedCountry: country,
       isCountriesOpen: false,
+      errorMessage: null,
     })
   };
 
   onSubmit = e => {
     e.preventDefault();
+    let {selectedCountry, phone} = this.state;
+    if (!selectedCountry.id || phone.length < selectedCountry.phoneInfo.minLength) {
+      this.setState({errorMessage: 'Некорректный формат'});
+      return;
+    }
     let shouldSend = window.confirm('Вы уверены, что хотите отправить сообщение?');
     if (!shouldSend) return;
     this.props.onSuccess();
@@ -96,7 +104,7 @@ export default class PhoneForm extends React.Component {
 
   render() {
     const {countries} = this.props;
-    const {isCountriesOpen, phone, selectedCountry} = this.state;
+    const {isCountriesOpen, phone, selectedCountry, errorMessage} = this.state;
     let phoneWithPrefix = `${selectedCountry.phoneInfo.prefix}${phone}`;
 
     return (
@@ -120,14 +128,8 @@ export default class PhoneForm extends React.Component {
             onSelect={this.onCountrySelect}
           />
         )}
-        <div>
-          phone length: {phone.length}
-        </div>
-        {selectedCountry && (
-          <div>
-            <div>min length: {selectedCountry.phoneInfo.minLength}</div>
-            <div>max length: {selectedCountry.phoneInfo.maxLength}</div>
-          </div>
+        {errorMessage && (
+          <div>{errorMessage}</div>
         )}
         <button>Далее</button>
       </Form>
