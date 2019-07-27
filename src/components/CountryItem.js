@@ -6,6 +6,7 @@ const Root = styled.div`
 padding: 13px;
 font-size: 0.8em;
 color: #424242;
+background: #fff;
 
 &:hover {
 background: #eee;
@@ -20,7 +21,7 @@ export default class CountryItem extends React.Component {
     return (
       <Root onClick={() => this.props.onSelect(country)}>
         <CountryFlag country={country} />
-        {country.name} ({country.phoneInfo.prefix})
+        {country.name} (+{country.phoneInfo.prefix})
       </Root>
     )
   }

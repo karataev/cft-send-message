@@ -3,6 +3,10 @@ import styled from 'styled-components';
 import CountryItem from "./CountryItem";
 
 const Root = styled.div`
+position: absolute;
+top: 30px;
+left: -10px;
+width: 500px;
 max-height: 200px;
 overflow: auto;
 box-shadow: 0 1px 12px 0 rgba(0,0,0,.1);

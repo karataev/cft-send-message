@@ -20,7 +20,9 @@ padding: 10px;
 `;
 
 const Arrow = styled.div`
+position: relative;
 margin-right: 10px;
+outline: none;
 `;
 
 const Input = styled.input`
@@ -44,15 +46,11 @@ export default class PhoneForm extends React.Component {
 
     this.state = {
       phone: '',
-      isCountriesOpen: true,
+      isCountriesOpen: false,
       selectedCountry: unknownCountry,
       errorMessage: null,
     }
   }
-
-  onArrowClick = e => {
-    this.setState({isCountriesOpen: !this.state.isCountriesOpen});
-  };
 
   findCountryByPhone(phone) {
     let country = this.props.countries.find(country => {
@@ -87,7 +85,8 @@ export default class PhoneForm extends React.Component {
       selectedCountry: country,
       isCountriesOpen: false,
       errorMessage: null,
-    })
+    });
+    this.arrowRef.blur();
   };
 
   onSubmit = e => {
@@ -111,9 +110,20 @@ export default class PhoneForm extends React.Component {
       <Form onSubmit={this.onSubmit}>
         <div>Телефон</div>
         <InputHolder>
-          <Arrow onClick={this.onArrowClick}>
+          <Arrow
+            onFocus={() => this.setState({isCountriesOpen: true})}
+            onBlur={() => this.setState({isCountriesOpen: false})}
+            tabIndex="0"
+            ref={el => this.arrowRef = el}
+          >
             <CountryFlag country={selectedCountry}/>
             <img src={require('../img/arrow.png')} alt="Arrow"/>
+            {isCountriesOpen && (
+              <CountriesList
+                countries={countries}
+                onSelect={this.onCountrySelect}
+              />
+            )}
           </Arrow>
           +
           <Input
@@ -122,12 +132,6 @@ export default class PhoneForm extends React.Component {
             onChange={this.onPhoneChange}
           />
         </InputHolder>
-        {isCountriesOpen && (
-          <CountriesList
-            countries={countries}
-            onSelect={this.onCountrySelect}
-          />
-        )}
         {errorMessage && (
           <div>{errorMessage}</div>
         )}
