@@ -29,7 +29,9 @@ export default class App extends React.Component {
     this.setState({isLoading: true});
     axios.get(countriesUrl)
       .then(res => {
-        let countries = res.data.filter(country => country.phoneInfo);
+        let countries = res.data
+          .filter(country => country.phoneInfo);
+        countries.forEach(country => country.phoneInfo.prefix = country.phoneInfo.prefix.replace('+', ''));
         this.setState({
           countries,
         });

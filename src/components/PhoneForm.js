@@ -29,6 +29,14 @@ flex-grow: 1;
 outline: none;
 `;
 
+const nullCountry = {
+  phoneInfo: {
+    prefix: '',
+    minLength: 12,
+    maxLength: 12,
+  }
+};
+
 export default class PhoneForm extends React.Component {
 
   constructor(props) {
@@ -37,7 +45,7 @@ export default class PhoneForm extends React.Component {
     this.state = {
       phone: '',
       isCountriesOpen: true,
-      selectedCountry: null,
+      selectedCountry: nullCountry,
     }
   }
 
@@ -46,22 +54,23 @@ export default class PhoneForm extends React.Component {
   };
 
   findCountryByPhone(phone) {
-    let phoneWithPlus = `+${phone}`;
-    return this.props.countries.find(country => {
-      return phoneWithPlus.indexOf(country.phoneInfo.prefix) === 0
+    let country = this.props.countries.find(country => {
+      return phone.indexOf(country.phoneInfo.prefix) === 0;
     });
+    return country || nullCountry;
+  }
+
+  normalizePhone(phoneWithPrefix, country) {
+    return phoneWithPrefix
+      .slice(country.phoneInfo.prefix.length)
+      .slice(0, country.phoneInfo.maxLength);
   }
 
   onPhoneChange = e => {
-    let phone = e.target.value.replace(/\D/g, '');
-    let country = this.findCountryByPhone(phone);
-    if (country) {
-      let {phoneInfo} = country;
-      let maxLength = phoneInfo.maxLength + phoneInfo.prefix.replace('+', '').length;
-      if (phone.length > maxLength) {
-        phone = phone.slice(0, maxLength);
-      }
-    }
+    let inputValue = e.target.value.replace(/\D/g, '');
+    let country = this.findCountryByPhone(inputValue);
+    let phone = this.normalizePhone(inputValue, country);
+
     this.setState({
       phone,
       selectedCountry: country,
@@ -69,10 +78,11 @@ export default class PhoneForm extends React.Component {
   };
 
   onCountrySelect = country => {
-    let phone = country.phoneInfo.prefix.replace('+', '');
+    let phoneWithPrefix = `${country.phoneInfo.prefix}${this.state.phone}`;
+    let phone = this.normalizePhone(phoneWithPrefix, country);
     this.setState({
-      phone,
-      selectedCountry: this.findCountryByPhone(phone),
+      phone: phone,
+      selectedCountry: country,
       isCountriesOpen: false,
     })
   };
@@ -87,7 +97,7 @@ export default class PhoneForm extends React.Component {
   render() {
     const {countries} = this.props;
     const {isCountriesOpen, phone, selectedCountry} = this.state;
-
+    let phoneWithPrefix = `${selectedCountry.phoneInfo.prefix}${phone}`;
 
     return (
       <Form onSubmit={this.onSubmit}>
@@ -100,7 +110,7 @@ export default class PhoneForm extends React.Component {
           +
           <Input
             type="tel"
-            value={phone}
+            value={phoneWithPrefix}
             onChange={this.onPhoneChange}
           />
         </InputHolder>
@@ -111,7 +121,7 @@ export default class PhoneForm extends React.Component {
           />
         )}
         <div>
-          phone length with prefix: {phone.length}
+          phone length: {phone.length}
         </div>
         {selectedCountry && (
           <div>

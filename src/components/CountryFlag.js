@@ -10,7 +10,7 @@ export default class CountryFlag extends React.Component {
   render() {
     const {country} = this.props;
 
-    if (!country) return null;
+    if (!country || !country.code) return null;
     let code = country.code.toLowerCase();
 
     return (
