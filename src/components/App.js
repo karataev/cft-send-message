@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import PhoneForm from "./PhoneForm";
 import 'flag-icon-css/css/flag-icon.css';
 import axios from "axios";
+import SuccessMessage from "./SuccessMessage";
 
 const Root = styled.div`
 display: flex;
@@ -80,11 +81,7 @@ export default class App extends React.Component {
                   onSuccess={this.onSendSuccess}
                   countries={countries}
                 />
-                {comment && (
-                  <div>
-                    {comment}
-                  </div>
-                )}
+                {comment && <SuccessMessage message={comment} />}
               </div>
             )}
           </div>

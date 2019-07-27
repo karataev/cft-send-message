@@ -2,9 +2,14 @@ import React from 'react';
 import styled from 'styled-components';
 import CountriesList from "./CountriesList";
 import CountryFlag from "./CountryFlag";
+import ErrorMessage from './ErrorMessage';
 
 const Form = styled.form`
 width: 500px;
+`;
+
+const PhoneText = styled.div`
+margin-bottom: 5px;
 `;
 
 const InputHolder = styled.div`
@@ -29,6 +34,16 @@ const Input = styled.input`
 border: none;
 flex-grow: 1;
 outline: none;
+`;
+
+const Button = styled.button`
+background: #ff5252;
+border: none;
+padding: 10px 25px;
+border-radius: 10px;
+color: #fff;
+font-size: 1.2em;
+margin-top: 20px;
 `;
 
 const unknownCountry = {
@@ -108,7 +123,7 @@ export default class PhoneForm extends React.Component {
 
     return (
       <Form onSubmit={this.onSubmit}>
-        <div>Телефон</div>
+        <PhoneText>Телефон</PhoneText>
         <InputHolder>
           <Arrow
             onFocus={() => this.setState({isCountriesOpen: true})}
@@ -132,10 +147,8 @@ export default class PhoneForm extends React.Component {
             onChange={this.onPhoneChange}
           />
         </InputHolder>
-        {errorMessage && (
-          <div>{errorMessage}</div>
-        )}
-        <button>Далее</button>
+        {errorMessage && <ErrorMessage message={errorMessage} />}
+        <Button>Далее</Button>
       </Form>
     )
   }
