@@ -23,7 +23,7 @@ export default class App extends React.Component {
       countries: [],
       isLoading: true,
       isLoadError: false,
-      isPopupOpen: true,
+      isPopupOpen: false,
     }
   }
 

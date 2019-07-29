@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import CountriesList from "./CountriesList";
 import CountryFlag from "./CountryFlag";
 import ErrorMessage from './ErrorMessage';
+import {RoundButton} from "../styles/Buttons";
 
 const Form = styled.form`
 width: 500px;
@@ -34,16 +35,6 @@ const Input = styled.input`
 border: none;
 flex-grow: 1;
 outline: none;
-`;
-
-const Button = styled.button`
-background: #ff5252;
-border: none;
-padding: 10px 25px;
-border-radius: 10px;
-color: #fff;
-font-size: 1.2em;
-margin-top: 20px;
 `;
 
 const unknownCountry = {
@@ -146,7 +137,7 @@ export default class PhoneForm extends React.Component {
           />
         </InputHolder>
         {errorMessage && <ErrorMessage message={errorMessage} />}
-        <Button>Далее</Button>
+        <RoundButton primary>Далее</RoundButton>
       </Form>
     )
   }
