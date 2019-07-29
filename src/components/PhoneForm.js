@@ -4,6 +4,7 @@ import CountriesList from "./CountriesList";
 import CountryFlag from "./CountryFlag";
 import ErrorMessage from './ErrorMessage';
 import {RoundButton} from "../styles/Buttons";
+import InputMask from 'react-input-mask';
 
 const Form = styled.form`
 width: 500px;
@@ -15,7 +16,7 @@ margin-bottom: 5px;
 
 const InputHolder = styled.div`
 display: flex;
-align-items: baseline;
+align-items: center;
 border: 1px solid #e0e0e0;
 border-radius: 2px;
 padding: 10px;
@@ -31,7 +32,7 @@ margin-right: 10px;
 outline: none;
 `;
 
-const Input = styled.input`
+const Input = styled(InputMask)`
 border: none;
 flex-grow: 1;
 outline: none;
@@ -42,6 +43,7 @@ const unknownCountry = {
     prefix: '',
     minLength: 12,
     maxLength: 12,
+    format: '+000 000 000 000',
   }
 };
 
@@ -69,6 +71,10 @@ export default class PhoneForm extends React.Component {
     return phoneWithPrefix
       .slice(country.phoneInfo.prefix.length)
       .slice(0, country.phoneInfo.maxLength);
+  }
+
+  getNormalizedFormat() {
+    return this.state.selectedCountry.phoneInfo.format.replace(/0/g, '9');
   }
 
   onPhoneChange = e => {
@@ -109,6 +115,7 @@ export default class PhoneForm extends React.Component {
     const {countries} = this.props;
     const {isCountriesOpen, phone, selectedCountry, errorMessage} = this.state;
     let phoneWithPrefix = `${selectedCountry.phoneInfo.prefix}${phone}`;
+    const mask = this.getNormalizedFormat();
 
     return (
       <Form onSubmit={this.onSubmit}>
@@ -129,9 +136,9 @@ export default class PhoneForm extends React.Component {
               />
             )}
           </Arrow>
-          +
           <Input
-            type="tel"
+            mask={mask}
+            maskChar={null}
             value={phoneWithPrefix}
             onChange={this.onPhoneChange}
           />
