@@ -2,9 +2,10 @@ import React from 'react';
 import styled from 'styled-components';
 import PhoneForm from "./PhoneForm";
 import 'flag-icon-css/css/flag-icon.css';
-import axios from "axios";
+import {connect} from "react-redux";
 import SuccessMessage from "./SuccessMessage";
 import ConfirmPopup from "./ConfirmPopup";
+import {fetchCountries} from "../store/actions";
 
 const Root = styled.div`
 display: flex;
@@ -13,40 +14,20 @@ align-items: center;
 margin-top: 100px;
 `;
 
-export default class App extends React.Component {
+class App extends React.Component {
 
   constructor(props) {
     super(props);
 
     this.state = {
       comment: null,
-      countries: [],
-      isLoading: true,
-      isLoadError: false,
       isPopupOpen: false,
     }
   }
 
   componentDidMount() {
-    let countriesUrl = 'https://koronapay.com/online/api/countries';
-    this.setState({isLoading: true});
-    axios.get(countriesUrl)
-      .then(res => {
-        let countries = res.data
-          .filter(country => country.phoneInfo);
-        countries.forEach(country => country.phoneInfo.prefix = country.phoneInfo.prefix.replace('+', ''));
-        this.setState({
-          countries,
-        });
-      })
-      .catch(err => {
-        this.setState({isLoadError: true});
-      })
-      .finally(() => {
-        this.setState({isLoading: false});
-      })
+    this.props.fetchCountries();
   }
-
 
   onFormComplete = () => {
     this.setState({isPopupOpen: true});
@@ -69,7 +50,8 @@ export default class App extends React.Component {
   };
 
   render() {
-    const {comment, countries, isLoading, isLoadError, isPopupOpen} = this.state;
+    const {comment, isPopupOpen} = this.state;
+    const {isLoading, isLoadError, countries} = this.props;
 
     return (
       <Root>
@@ -110,3 +92,17 @@ export default class App extends React.Component {
     );
   }
 }
+
+function mapStateToProps(state) {
+  return {
+    countries: state.countries,
+    isLoading: state.isLoading,
+    isLoadError: state.isLoadError,
+  }
+}
+
+const mapDispatchToProps = {
+  fetchCountries,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
