@@ -4,6 +4,7 @@ import PhoneForm from "./PhoneForm";
 import 'flag-icon-css/css/flag-icon.css';
 import axios from "axios";
 import SuccessMessage from "./SuccessMessage";
+import ConfirmPopup from "./ConfirmPopup";
 
 const Root = styled.div`
 display: flex;
@@ -22,6 +23,7 @@ export default class App extends React.Component {
       countries: [],
       isLoading: true,
       isLoadError: false,
+      isPopupOpen: true,
     }
   }
 
@@ -47,18 +49,37 @@ export default class App extends React.Component {
   }
 
 
-  onSendSuccess = () => {
-    this.setState({comment: 'Сообщение было успешно отправлено'});
+  onFormComplete = () => {
+    this.setState({isPopupOpen: true});
+  };
+
+  onConfirmMessage = () => {
+    this.setState({
+      isPopupOpen: false,
+      comment: 'Сообщение было успешно отправлено',
+    });
+
     setTimeout(() => {
       this.setState({comment: null});
     }, 5000);
+
+  };
+
+  onCancelMessage = () => {
+    this.setState({isPopupOpen: false});
   };
 
   render() {
-    const {comment, countries, isLoading, isLoadError} = this.state;
+    const {comment, countries, isLoading, isLoadError, isPopupOpen} = this.state;
 
     return (
       <Root>
+        {isPopupOpen && (
+          <ConfirmPopup
+            onConfirm={this.onConfirmMessage}
+            onCancel={this.onCancelMessage}
+          />
+        )}
         {isLoading && <div>Загрузка...</div>}
         {!isLoading && (
           <div>
@@ -78,7 +99,7 @@ export default class App extends React.Component {
             {!isLoadError && (
               <div>
                 <PhoneForm
-                  onSuccess={this.onSendSuccess}
+                  onComplete={this.onFormComplete}
                   countries={countries}
                 />
                 {comment && <SuccessMessage message={comment} />}

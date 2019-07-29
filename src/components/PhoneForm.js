@@ -111,9 +111,7 @@ export default class PhoneForm extends React.Component {
       this.setState({errorMessage: 'Некорректный формат'});
       return;
     }
-    let shouldSend = window.confirm('Вы уверены, что хотите отправить сообщение?');
-    if (!shouldSend) return;
-    this.props.onSuccess();
+    this.props.onComplete();
   };
 
   render() {
